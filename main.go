@@ -36,14 +36,18 @@ func main() {
 	}
 
 	gvr := schema.GroupVersionResource{
-		Group:    "",
-		Version:  "v1",
-		Resource: "pods",
+		//Group:    "",
+		Group: "gateway.kyma-project.io",
+		//Version:  "v",
+		Version: "v1alpha1",
+		//Resource: "pod",
+		Resource: "apirule",
 	}
 
-	pods, err := dynamicClient.Resource(gvr).Namespace("kube-system").List(context.Background(), v1.ListOptions{})
+	//pods, err := dynamicClient.Resource(gvr).Namespace("kube-system").List(context.Background(), v1.ListOptions{})
+	pods, err := dynamicClient.Resource(gvr).Namespace("kyma-system").List(context.Background(), v1.ListOptions{})
 	if err != nil {
-		fmt.Printf("error getting pods: %v\n", err)
+		fmt.Printf("error getting %s: %v\n", gvr.Resource, err)
 		os.Exit(1)
 	}
 
