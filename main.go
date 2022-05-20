@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Get pod names with the dynamic client")
+	fmt.Println("Get subscription with the dynamic client")
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -36,25 +36,29 @@ func main() {
 	}
 
 	gvr := schema.GroupVersionResource{
-		//Group:    "",
-		Group: "gateway.kyma-project.io",
-		//Version:  "v",
-		Version: "v1alpha1",
-		//Resource: "pod",
-		Resource: "apirule",
+		Group:    "eventing.kyma-project.io",
+		Version:  "v1alpha1",
+		Resource: "subscriptions",
 	}
 
-	//pods, err := dynamicClient.Resource(gvr).Namespace("kube-system").List(context.Background(), v1.ListOptions{})
-	pods, err := dynamicClient.Resource(gvr).Namespace("kyma-system").List(context.Background(), v1.ListOptions{})
+	subs, err := dynamicClient.Resource(gvr).Namespace("goldfish").List(context.Background(), v1.ListOptions{})
 	if err != nil {
 		fmt.Printf("error getting %s: %v\n", gvr.Resource, err)
 		os.Exit(1)
 	}
 
-	for _, pod := range pods.Items {
+	for _, sub := range subs.Items {
 		fmt.Printf(
 			"Name: %s\n",
-			pod.Object["metadata"].(map[string]interface{})["name"],
+			sub.Object["metadata"].(map[string]interface{})["name"],
+		)
+		fmt.Printf(
+			"Ready: %v\n",
+			sub.Object["status"].(map[string]interface{})["ready"],
+		)
+		fmt.Printf(
+			"CleanEventTypes: %v\n",
+			sub.Object["status"].(map[string]interface{})["cleanEventTypes"],
 		)
 	}
 }
